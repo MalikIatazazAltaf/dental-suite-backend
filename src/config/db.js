@@ -1,8 +1,9 @@
 //utils ma db.js ma srf humne connection logic lagayi ha remember
 const mongoose=require ("mongoose");
+require('dotenv').config(); 
 const connectDB = async () => {
   try {
-    await mongoose.connect("mongodb://localhost:27017/dentalsuite_db", {
+    await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
