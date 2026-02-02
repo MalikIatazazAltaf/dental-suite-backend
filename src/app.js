@@ -4,7 +4,10 @@ const app = express();
 
 app.use(express.json());
 // Connect MongoDB
-connectDB();
+// connectDB();
+(async () => {
+  await connectDB();
+})();
 require('dotenv').config(); 
 console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
