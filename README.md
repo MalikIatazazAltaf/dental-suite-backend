@@ -534,3 +534,9 @@ Response
     ]
 }
 7️⃣ Reports
+7.1 Daily Report
+
+GET /api/reports/daily?date=2026-01-27
+7.2 Monthly Report
+
+GET /api/reports/monthly?month=2026-01

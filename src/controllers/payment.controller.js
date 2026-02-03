@@ -7,7 +7,21 @@ exports.createPayment = async (req,res) => {
 
     const invoice = await Invoice.findOne({ _id: invoice_id, clinic_id: req.user.clinic_id });
     if(!invoice) return res.status(404).json({ message: 'Invoice not found' });
-
+    
+    //invoice ma total payment jo ha usse zyada payment na ho
+     // 🔒 1️⃣ BLOCK if invoice already paid
+    if (invoice.status === 'paid' || invoice.balance_due <= 0) {
+      return res.status(400).json({
+        message: 'Invoice is already fully paid'
+      });
+    }
+    // 🔒 2️⃣ BLOCK over-payment
+    if (amount > invoice.balance_due) {
+      return res.status(400).json({
+        message: `Payment amount exceeds balance due (${invoice.balance_due})`
+      });
+    }
+    //yahan tak check hogaya ha
     const payment = await Payment.create({
       invoice_id,
       amount,
