@@ -4,7 +4,7 @@ const commonFields = require('./commonFields');
 
 const invoiceSchema = new Schema({
   ...commonFields,
-  invoice_number: { type: String, required: true , unique:true}, // per clinic sequence
+  invoice_number: { type: String, required: true}, // per clinic sequence
   patient_id: { type: String, required: true },
   appointment_id: { type: String },
   subtotal: { type: Number, required: true },
@@ -16,5 +16,10 @@ const invoiceSchema = new Schema({
   status: { type: String, enum: ['unpaid', 'partial', 'paid'], default: 'unpaid' },
   notes: { type: String }
 });
+// ✅ YAHAN ADD KARO (VERY IMPORTANT)
+invoiceSchema.index(
+  { clinic_id: 1, invoice_number: 1 },
+  { unique: true }
+);
 
 module.exports = mongoose.model('Invoice', invoiceSchema);

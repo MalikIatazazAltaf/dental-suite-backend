@@ -150,10 +150,27 @@ exports.getInvoices = async (req,res) => {
 const PDFDocument = require('pdfkit');
 exports.getReceiptPDF = async (req,res) => {
   try {
-    const invoice = await Invoice.findById(req.params.id);
-    if (!invoice) {
-      return res.status(404).json({ message: 'Invoice not found' });
+     // 1️⃣ ROLE RESTRICTION
+    if (!['owner', 'receptionist'].includes(req.user.role)) {
+      return res.status(403).json({
+        message: 'Only owner or receptionist can generate receipt PDF'
+      });
     }
+        // 2️⃣ INVOICE MUST BELONG TO SAME CLINIC
+    const invoice = await Invoice.findOne({
+      _id: req.params.id,
+      clinic_id: req.user.clinic_id
+    });
+
+    if (!invoice) {
+      return res.status(404).json({
+        message: 'Invoice not found for your clinic'
+      });
+    } 
+    // const invoice = await Invoice.findById(req.params.id);
+    // if (!invoice) {
+    //   return res.status(404).json({ message: 'Invoice not found' });
+    // }
     //  2️⃣ ✅ ENTITLEMENT CHECK (YAHAN LIKHNA HAI)
     const clinic = await Clinic.findById(req.user.clinic_id);
 

@@ -4,7 +4,8 @@ const counterSchema = new mongoose.Schema({
   clinic_id: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    ref: 'Clinic'
   },
   seq: {
     type: Number,

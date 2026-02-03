@@ -22,6 +22,12 @@ exports.getPatients = async (req, res) => {
 
 exports.createPatient = async (req, res) => {
   try {
+    // 🔐 ROLE CHECK (HERE)
+    if (req.user.role === 'dentist') {
+      return res.status(403).json({
+        message: 'Dentist is not allowed to create patients'
+      });
+    }
     const { name, phone, email, notes_light } = req.body;
     const patient = await Patient.create({
       name, phone, email, notes_light,

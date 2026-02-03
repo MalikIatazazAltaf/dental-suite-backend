@@ -10,6 +10,12 @@ exports.getServices = async (req, res) => {
 };
 
 exports.createService = async (req, res) => {
+   // 🔐 ROLE CHECK (HERE)
+    if (req.user.role === 'dentist') {
+      return res.status(403).json({
+        message: 'Dentist is not allowed to create services'
+      });
+    }
   try {
     const { name, default_fee, default_duration_minutes, is_active } = req.body;
     const service = await Service.create({

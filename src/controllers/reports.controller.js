@@ -3,6 +3,13 @@ const Invoice = require('../models/Invoice');
 
 exports.dailyReport = async (req,res) => {
   try {
+    // dentist ko report dekhne se block krna
+     // 🔐 ROLE CHECK (HERE)
+    if (req.user.role === 'dentist') {
+      return res.status(403).json({
+        message: 'Not authorized  to view reports'
+      });
+    }
     const { date } = req.query;
     const start = new Date(date);
     start.setHours(0,0,0,0);
@@ -18,6 +25,13 @@ exports.dailyReport = async (req,res) => {
 
 exports.monthlyReport = async (req,res) => {
   try {
+    // dentist ko report dekhne se block krna
+     // 🔐 ROLE CHECK (HERE)
+     if (req.user.role === 'dentist') {
+      return res.status(403).json({
+        message: 'Not authorized  to view reports'
+      });
+    }
     const { month } = req.query; // "2026-01"
     const start = new Date(`${month}-01`);
     const end = new Date(start.getFullYear(), start.getMonth()+1,0,23,59,59,999);

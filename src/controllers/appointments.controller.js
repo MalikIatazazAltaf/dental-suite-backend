@@ -51,7 +51,7 @@ exports.createAppointment = async (req, res) => {
     const userRole = req.user.role;
 
     // 🔒 Role restriction
-    if (!['owner', 'receptionist', 'dentist'].includes(userRole)) {
+    if (!['owner', 'receptionist'].includes(userRole)) {
       return res.status(403).json({ message: 'Not allowed to create appointment' });
     }
 
@@ -110,12 +110,7 @@ if (!provider) {
       return res.status(400).json({ message: 'Invalid service for this clinic' });
     }
 
-    // 4️⃣ Dentist self-rule
-    if (userRole === 'dentist' && req.user.id.toString() !== dentist_id) {
-      return res.status(403).json({
-        message: 'Dentist can only create appointments for himself'
-      });
-    }
+  
 
     // ---------------------------
     // ✅ CREATE APPOINTMENT
@@ -144,6 +139,13 @@ if (!provider) {
 
 exports.createWalkin = async (req, res) => {
   try {
+    const userRole = req.user.role;
+     // 🔒 Role restriction (NEW)
+    if (!['owner', 'receptionist'].includes(userRole)) {
+      return res.status(403).json({
+        message: 'Only owner or receptionist can create walk-in appointments'
+      });
+    }
     const { patient_id, service_id, dentist_id, fee_snapshot } = req.body;
 
     // Token number logic: last walkin of the day
