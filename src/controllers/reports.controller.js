@@ -4,10 +4,10 @@ const Invoice = require('../models/Invoice');
 exports.dailyReport = async (req,res) => {
   try {
     // dentist ko report dekhne se block krna
-     // 🔐 ROLE CHECK (HERE)
-    if (req.user.role === 'dentist') {
+    // 1️⃣ ROLE RESTRICTION
+    if (!['owner', 'receptionist'].includes(req.user.role)) {
       return res.status(403).json({
-        message: 'Not authorized  to view reports'
+        message: 'Only owner or receptionist can generate reports'
       });
     }
     const { date } = req.query;
@@ -27,9 +27,10 @@ exports.monthlyReport = async (req,res) => {
   try {
     // dentist ko report dekhne se block krna
      // 🔐 ROLE CHECK (HERE)
-     if (req.user.role === 'dentist') {
+      // 1️⃣ ROLE RESTRICTION
+    if (!['owner', 'receptionist'].includes(req.user.role)) {
       return res.status(403).json({
-        message: 'Not authorized  to view reports'
+        message: 'Only owner or receptionist can generate reports'
       });
     }
     const { month } = req.query; // "2026-01"

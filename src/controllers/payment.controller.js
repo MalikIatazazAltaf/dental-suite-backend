@@ -3,6 +3,14 @@ const Invoice = require('../models/Invoice');
 
 exports.createPayment = async (req,res) => {
   try {
+     // dentist ko report dekhne se block krna
+     // 🔐 ROLE CHECK (HERE)
+     // 1️⃣ ROLE RESTRICTION
+    if (!['owner', 'receptionist'].includes(req.user.role)) {
+      return res.status(403).json({
+        message: 'Only owner or receptionist can create payments'
+      });
+    }
     const { invoice_id, amount, method, paid_at, note } = req.body;
 
     const invoice = await Invoice.findOne({ _id: invoice_id, clinic_id: req.user.clinic_id });

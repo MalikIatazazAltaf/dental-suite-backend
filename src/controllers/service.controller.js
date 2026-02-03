@@ -11,9 +11,10 @@ exports.getServices = async (req, res) => {
 
 exports.createService = async (req, res) => {
    // 🔐 ROLE CHECK (HERE)
-    if (req.user.role === 'dentist') {
+      // 1️⃣ ROLE RESTRICTION
+    if (!['owner', 'receptionist'].includes(req.user.role)) {
       return res.status(403).json({
-        message: 'Dentist is not allowed to create services'
+        message: 'Only owner or receptionist can create services'
       });
     }
   try {
