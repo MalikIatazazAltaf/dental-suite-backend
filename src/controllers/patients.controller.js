@@ -53,3 +53,33 @@ exports.getPatientById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+//soft delete patient - owner and receptionist can do it
+exports.softDeletePatient = async (req, res) => {
+  try {
+     if (!['owner', 'receptionist'].includes(req.user.role)) {
+      return res.status(403).json({
+        message: 'Only owner or receptionist can delete patients'
+      });
+    }
+    const patient = await Patient.findOne({
+      _id: req.params.id,
+      clinic_id: req.user.clinic_id
+    });
+
+    if (!patient) {
+      return res.status(404).json({
+        message: 'Patient not found'
+      });
+    }
+
+    patient.is_deleted = true;
+    await patient.save();
+
+    res.json({
+      message: 'Patient deleted successfully'
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

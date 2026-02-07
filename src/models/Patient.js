@@ -9,5 +9,9 @@ const patientSchema = new Schema({
   notes_light: { type: String },
   last_visit_at: { type: Date } // optional denormalized
 });
+patientSchema.pre(/^find/, function (next) {
+  this.find({ is_deleted: false });
+  next();
+});
 
 module.exports = mongoose.model('Patient', patientSchema);

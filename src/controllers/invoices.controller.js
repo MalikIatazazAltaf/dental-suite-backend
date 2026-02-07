@@ -216,3 +216,35 @@ exports.getReceiptPDF = async (req,res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// Soft delete invoice
+exports.softDeleteInvoice = async (req, res) => {
+  try {
+       // 🔒 Role restriction
+    if (!['owner', 'receptionist'].includes(req.user.role)) {
+      return res.status(403).json({
+        message: 'Not authorized to delete invoice'
+      });
+    }
+    const invoice = await Invoice.findOne({
+      _id: req.params.id,
+      clinic_id: req.user.clinic_id
+    });
+
+    if (!invoice) {
+      return res.status(404).json({
+        message: 'Invoice not found'
+      });
+    }
+
+    invoice.is_deleted = true;
+    await invoice.save();
+
+    res.json({
+      message: 'Invoice deleted successfully'
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

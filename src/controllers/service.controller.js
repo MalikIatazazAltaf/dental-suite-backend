@@ -29,3 +29,33 @@ exports.createService = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+// Soft delete service
+exports.softDeleteService = async (req, res) => {
+  try {
+    if (!['owner', 'receptionist'].includes(req.user.role)) {
+      return res.status(403).json({
+        message: 'Only owner or receptionist can delete services'
+      });
+    }
+    const service = await Service.findOne({
+      _id: req.params.id,
+      clinic_id: req.user.clinic_id
+    });
+
+    if (!service) {
+      return res.status(404).json({
+        message: 'Service not found'
+      });
+    }
+
+    service.is_deleted = true;
+    await service.save();
+
+    res.json({
+      message: 'Service deleted successfully'
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
