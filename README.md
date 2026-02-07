@@ -540,3 +540,218 @@ GET /api/reports/daily?date=2026-01-27
 7.2 Monthly Report
 
 GET /api/reports/monthly?month=2026-01
+8️⃣ PDF Receipt
+
+GET /api/invoices/:id/receipt-pdf
+
+Headers: Authorization: Bearer <token>
+
+/////////////New Additional APIs /////////////////////////////////////////////////////
+📌 Verify Email (via email link)
+Method: GET
+Endpoint:  /api/auth/verify-email/:token
+Description:
+User ko email verification link pe click karne ke baad ye API hit hoti hai.
+
+Request Params:
+
+token → email verification token (email se milta hai)
+
+Success Response (200):
+
+{
+  "message": "Email verified successfully. You can now login."
+}
+Error Response (400):
+
+{
+  "message": "Invalid or expired token"
+}
+
+2️⃣ Forgot Password
+📌 Forgot Password (send reset email)
+
+Method: POST
+Endpoint:
+
+/api/auth/forgot-password
+
+
+Description:
+User apna email deta hai, system usko reset password email bhejta hai.
+
+Request Body:
+
+{
+  "email": "user@example.com"
+}
+
+
+Response (Always same – security reason):
+
+{
+  "message": "If this email exists, a reset link has been sent."
+}
+3️⃣ Reset Password
+📌 Reset Password (via email link)
+
+Method: POST
+Endpoint:
+
+/api/auth/reset-password/:token
+
+
+Description:
+User email se aaye huay link par new password set karta hai.
+
+Request Params:
+
+token → reset password token (email se)
+
+Request Body:
+
+{
+  "password": "newStrongPassword123"
+}
+
+
+Success Response (200):
+
+{
+  "message": "Password reset successful. You can now login."
+}
+
+
+Error Response (400):
+
+{
+  "message": "Invalid or expired reset token"
+}
+
+4️⃣ Staff Listing (Clinic Staff)
+📌 Get All Staff of Clinic
+
+Method: GET
+Endpoint:
+
+/api/users/staff
+
+
+Access:
+✅ Owner
+✅ Receptionist
+
+Description:
+Owner ya receptionist apni clinic ka poora staff list dekh sakta hai
+(owner, dentist, receptionist).
+
+Headers:
+
+Authorization: Bearer <JWT_TOKEN>
+
+
+Success Response (200):
+
+{
+  "staff": [
+    {
+      "_id": "userId1",
+      "name": "Dr Ahmed",
+      "email": "ahmed@clinic.com",
+      "role": "dentist",
+      "is_active": true
+    },
+    {
+      "_id": "userId2",
+      "name": "Sara",
+      "email": "sara@clinic.com",
+      "role": "receptionist",
+      "is_active": false
+    }
+  ]
+}
+5️⃣ Staff Enable / Disable (Toggle Status)
+📌 Toggle Staff Active Status
+
+Method: PATCH
+Endpoint:
+
+/api/users/:userId/toggle-status
+
+
+Access:
+✅ Owner only
+
+Description:
+Owner apne clinic ke kisi bhi staff member ko:
+
+agar is_active = true ho → disable kar sakta hai
+
+agar is_active = false ho → enable kar sakta hai
+
+Same API se enable + disable dono kaam hotay hain.
+
+Headers:
+
+Authorization: Bearer <JWT_TOKEN>
+
+
+Request Params:
+
+userId → staff member ka MongoDB _id
+
+Request Body:
+❌ No body required
+
+✅ Success Response (200)
+{
+  "message": "User status updated successfully",
+  "is_active": false
+}
+
+
+ya
+
+{
+  "message": "User status updated successfully",
+  "is_active": true
+}
+
+❌ Error Responses
+
+403 – Only owner allowed
+
+{
+  "message": "Only owner can enable or disable users"
+}
+
+
+404 – User not found
+
+{
+  "message": "User not found"
+}
+
+🧠 Frontend Logic (Important)
+
+Frontend sirf ye kare:
+
+Staff list API se is_active read kare
+
+Button ka label conditionally change kare:
+
+is_active === true → Disable
+
+is_active === false → Enable
+
+Button click pe:
+
+PATCH /api/users/{userId}/toggle-status
+
+
+Koi alag enable / disable API exist hi nahi karti ✅
+
+/////////////////////////Soft Delete Apis/////////////////////////////////////////
+DELETE /api/patients/:id
+DELETE /api/services/:id
+DELETE /api/invoices/:id

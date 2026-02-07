@@ -1,1 +1,6 @@
 /node_modules
+src/.env
+# All env files
+.env
+*.env
+**/.env

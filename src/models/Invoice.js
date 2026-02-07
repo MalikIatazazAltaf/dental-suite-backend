@@ -19,7 +19,11 @@ const invoiceSchema = new Schema({
 // ✅ YAHAN ADD KARO (VERY IMPORTANT)
 invoiceSchema.index(
   { clinic_id: 1, invoice_number: 1 },
-  { unique: true }
+  // { unique: true }
 );
+invoiceSchema.pre(/^find/, function (next) {
+  this.find({ is_deleted: false });
+  next();
+});
 
 module.exports = mongoose.model('Invoice', invoiceSchema);

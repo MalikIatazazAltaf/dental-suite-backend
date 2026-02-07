@@ -7,4 +7,6 @@ router.post('/', protect, invoiceController.createInvoice);
 router.get('/', protect, invoiceController.getInvoices);
 router.get('/:id/receipt-pdf', protect, invoiceController.getReceiptPDF);
 
+router.delete('/:id', protect, invoiceController.softDeleteInvoice);
+
 module.exports = router;

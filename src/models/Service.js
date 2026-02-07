@@ -8,5 +8,9 @@ const serviceSchema = new Schema({
   default_duration_minutes: { type: Number, required: true },
   is_active: { type: Boolean, default: true }
 });
+serviceSchema.pre(/^find/, function (next) {
+  this.find({ is_deleted: false });
+  next();
+});
 
 module.exports = mongoose.model('Service', serviceSchema);
