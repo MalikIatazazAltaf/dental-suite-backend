@@ -4,7 +4,7 @@ const commonFields = require('./commonFields');
 
 const invoiceSchema = new Schema({
   ...commonFields,
-  invoice_number: { type: String, required: true}, // per clinic sequence
+  invoice_number: { type: String, required: true,unique: true}, // per clinic sequence
   patient_id: { type: String, required: true },
   appointment_id: { type: String },
   subtotal: { type: Number, required: true },
@@ -19,7 +19,7 @@ const invoiceSchema = new Schema({
 // ✅ YAHAN ADD KARO (VERY IMPORTANT)
 invoiceSchema.index(
   { clinic_id: 1, invoice_number: 1 },
-  // { unique: true }
+  { unique: true }
 );
 invoiceSchema.pre(/^find/, function (next) {
   this.find({ is_deleted: false });

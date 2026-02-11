@@ -63,20 +63,46 @@ exports.createInvoice = async (req, res) => {
     let tax_amount = tax_enabled ? ((subtotal - discount_amount)*0.15) : 0; // example 15%
     const total = subtotal - discount_amount + tax_amount;
 
-    // invoice_number sequence per clinic
-    // const lastInvoice = await Invoice.find({ clinic_id: req.user.clinic_id }).sort({ created_at: -1 }).limit(1);
-    // const lastNumber = lastInvoice.length ? parseInt(lastInvoice[0].invoice_number.split('-')[1]) : 0;
-    // const invoice_number = `INV-${String(lastNumber+1).padStart(6,'0')}`;
+//     const counter = await Counter.findOneAndUpdate(
+//   { clinic_id: req.user.clinic_id },
+//   { $inc: { seq: 1 } },
+//   { new: true, upsert: true }
+// );
 
-    //naya function invoice number k problem ko set krnay k liyay
-    const counter = await Counter.findOneAndUpdate(
+// const invoice_number = `INV-${String(counter.seq).padStart(6, '0')}`;
+    
+     //yahan se change shuru kia ha
+         // Step 1: Try to increment counter
+let counter = await Counter.findOneAndUpdate(
   { clinic_id: req.user.clinic_id },
   { $inc: { seq: 1 } },
-  { new: true, upsert: true }
+  { new: true }
 );
 
+// Step 2: Agar counter exist nahi karta (first time)
+if (!counter) {
+  const lastInvoice = await Invoice.findOne({
+    clinic_id: req.user.clinic_id
+  }).sort({ created_at: -1 });
+
+  let lastSeq = 0;
+
+  if (lastInvoice && lastInvoice.invoice_number) {
+    const parts = lastInvoice.invoice_number.split('-');
+    lastSeq = parseInt(parts[1]) || 0;
+  }
+
+  counter = await Counter.create({
+    clinic_id: req.user.clinic_id,
+    seq: lastSeq + 1
+  });
+}
+
+// Step 3: Generate invoice number
 const invoice_number = `INV-${String(counter.seq).padStart(6, '0')}`;
-/////yahan tak
+
+     //yahan tak change chala ha 
+
 
     const invoice = await Invoice.create({
       patient_id,
