@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const counterSchema = new mongoose.Schema({
   clinic_id: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    // type: String,
     required: true,
     unique: true,
     ref: 'Clinic'
