@@ -4,7 +4,7 @@ const commonFields = require('./commonFields');
 
 const invoiceSchema = new Schema({
   ...commonFields,
-  invoice_number: { type: String, required: true,unique: true}, // per clinic sequence
+  invoice_number: { type: String, required: true}, // per clinic sequence
   patient_id: { type: String, required: true },
   appointment_id: { type: String },
   subtotal: { type: Number, required: true },

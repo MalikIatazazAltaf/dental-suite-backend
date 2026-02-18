@@ -74,9 +74,9 @@ exports.createInvoice = async (req, res) => {
      //yahan se change shuru kia ha
          // Step 1: Try to increment counter
 let counter = await Counter.findOneAndUpdate(
-  { clinic_id: req.user.clinic_id },
+  { clinic_id: req.user.clinic_id , name: "invoice"},
   { $inc: { seq: 1 } },
-  { new: true }
+  { new: true , upsert: true }
 );
 
 // Step 2: Agar counter exist nahi karta (first time)
