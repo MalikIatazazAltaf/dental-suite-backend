@@ -29,7 +29,11 @@ exports.register = async (req, res) => {
       working_hours } = req.body;
 
     // Basic required validation
-    if (!name || !email || !password || !clinic_name || !phone ||!address  || ! timezone || !tax_enabled_default || !receipt_footer_note || !working_hours
+    // if (!name || !email || !password || !clinic_name || !phone ||!address  || ! timezone || !tax_enabled_default || !receipt_footer_note || !working_hours
+    //   ) {
+    //   return res.status(400).json({ message: 'Missing required fields' });
+    // }
+    if (!name || !email || !password || !clinic_name || !phone ||!address
       ) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
