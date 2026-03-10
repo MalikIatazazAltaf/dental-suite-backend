@@ -1,8 +1,9 @@
 const express = require('express');
 const connectDB = require('./config/db');
 const app = express();
-
+const cors = require("cors");
 app.use(express.json());
+app.use(cors()); // allow all origins
 // Connect MongoDB
 // connectDB();
 (async () => {
